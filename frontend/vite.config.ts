@@ -27,6 +27,9 @@ export default defineConfig({
     strictPort: false, // If port is busy, try next available port
     // Automatically open browser to network IP for mobile testing
     open: `http://${networkIP}:5173`,
+    allowedHosts: [
+      'tradepulse-1.onrender.com', // Add your Render frontend domain here
+    ],
   },
   preview: {
     host: '0.0.0.0',
