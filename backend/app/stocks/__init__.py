@@ -1,0 +1,3 @@
+"""
+Stocks module initialization.
+"""

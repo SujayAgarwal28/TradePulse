@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backend Connectivity Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #1a1a1a;
+            color: white;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success { background-color: #10b981; }
+        .error { background-color: #ef4444; }
+        .info { background-color: #3b82f6; }
+        button {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background-color: #2563eb; }
+        .spinner {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3b82f6;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 TradePulse Backend Connectivity Test</h1>
+    
+    <div class="test-result info">
+        <strong>Environment Variables:</strong><br>
+        VITE_API_URL: <span id="api-url"></span>
+    </div>
+    
+    <div>
+        <button onclick="testHealth()">Test Backend Health</button>
+        <button onclick="testAuth()">Test Auth Endpoint</button>
+        <button onclick="testUserSearch()">Test User Search</button>
+        <button onclick="testAllEndpoints()">Test All Endpoints</button>
+    </div>
+    
+    <div id="results"></div>
+    
+    <script>
+        // Display environment variables
+        document.getElementById('api-url').textContent = import.meta.env.VITE_API_URL || 'Not set';
+        
+        const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+        
+        function addResult(message, type = 'info') {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.innerHTML = message;
+            results.appendChild(div);
+            results.scrollTop = results.scrollHeight;
+        }
+        
+        function addSpinner(id) {
+            return `<span class="spinner" id="${id}"></span>`;
+        }
+        
+        function removeSpinner(id) {
+            const spinner = document.getElementById(id);
+            if (spinner) spinner.remove();
+        }
+        
+        async function testHealth() {
+            const spinnerId = 'health-spinner';
+            addResult(`${addSpinner(spinnerId)}Testing backend health at ${API_BASE_URL}/health...`);
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/health`);
+                removeSpinner(spinnerId);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    addResult(`✅ Backend health check passed: ${JSON.stringify(data)}`, 'success');
+                } else {
+                    addResult(`❌ Backend health check failed: ${response.status} ${response.statusText}`, 'error');
+                }
+            } catch (error) {
+                removeSpinner(spinnerId);
+                addResult(`❌ Backend health check error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testAuth() {
+            const spinnerId = 'auth-spinner';
+            addResult(`${addSpinner(spinnerId)}Testing auth endpoint...`);
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: `test_${Date.now()}@example.com`,
+                        password: 'testpass123'
+                    })
+                });
+                removeSpinner(spinnerId);
+                
+                if (response.ok || response.status === 400) {
+                    addResult(`✅ Auth endpoint accessible (status: ${response.status})`, 'success');
+                } else {
+                    addResult(`❌ Auth endpoint failed: ${response.status} ${response.statusText}`, 'error');
+                }
+            } catch (error) {
+                removeSpinner(spinnerId);
+                addResult(`❌ Auth endpoint error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testUserSearch() {
+            const spinnerId = 'search-spinner';
+            addResult(`${addSpinner(spinnerId)}Testing user search endpoint...`);
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/social/search?q=test`);
+                removeSpinner(spinnerId);
+                
+                if (response.status === 403) {
+                    addResult(`✅ User search endpoint accessible (authentication required)`, 'success');
+                } else if (response.ok) {
+                    addResult(`✅ User search endpoint working`, 'success');
+                } else {
+                    addResult(`❌ User search failed: ${response.status} ${response.statusText}`, 'error');
+                }
+            } catch (error) {
+                removeSpinner(spinnerId);
+                addResult(`❌ User search error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testAllEndpoints() {
+            document.getElementById('results').innerHTML = '';
+            addResult('🚀 Starting comprehensive backend test...', 'info');
+            
+            await testHealth();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            await testAuth();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            await testUserSearch();
+            
+            addResult('✅ All tests completed!', 'success');
+        }
+        
+        // Auto-run tests on page load
+        window.onload = () => {
+            setTimeout(testAllEndpoints, 1000);
+        };
+    </script>
+</body>
+</html>
