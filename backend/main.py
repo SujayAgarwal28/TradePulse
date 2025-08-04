@@ -10,6 +10,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 
 from app.config import settings
+# Import production config if in production
+try:
+    if not settings.DEBUG:
+        from app.config_production import ProductionSettings
+        settings = ProductionSettings()
+except ImportError:
+    pass  # Use regular settings if production config not available
 from app.database import init_db
 from app.auth.routes import router as auth_router
 from app.stocks.routes import router as stocks_router
@@ -52,10 +59,14 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# Add CORS middleware with explicit preflight handling
+# Add CORS middleware with production-ready settings
+allowed_origins = ["*"]  # Default to allow all
+if hasattr(settings, 'ALLOWED_ORIGINS'):
+    allowed_origins = settings.ALLOWED_ORIGINS
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],  # Explicitly include OPTIONS
     allow_headers=["*"],  # Allow all headers
@@ -120,12 +131,6 @@ async def test_live_data():
         "sample_prices": dict(list(cached_prices.items())[:5]),  # Show first 5
         "last_update": str(live_scheduler.last_update) if live_scheduler.last_update else None
     }
-
-
-@app.get("/health")
-def health_check():
-    """Health check endpoint."""
-    return {"status": "healthy"}
 
 
 if __name__ == "__main__":

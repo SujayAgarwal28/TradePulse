@@ -1,0 +1,48 @@
+services:
+  # PostgreSQL Database
+  - type: pserv
+    name: tradepulse-postgres
+    env: node
+    plan: free
+    # Render will provide DATABASE_URL automatically
+
+  # Backend API Service
+  - type: web
+    name: tradepulse-backend
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python start.py
+    envVars:
+      - key: DATABASE_URL
+        fromService:
+          type: pserv
+          name: tradepulse-postgres
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: false
+      - key: ALPHA_VANTAGE_API_KEY
+        value: IIKESCGRVVVG7T3B  # Replace with your own API key
+      - key: PYTHON_VERSION
+        value: 3.11.7
+    buildDir: backend
+    healthCheckPath: /health
+
+  # Frontend Web Service
+  - type: web
+    name: tradepulse-frontend
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_VERSION
+        value: 20.10.0
+      - key: VITE_API_BASE_URL
+        fromService:
+          type: web
+          name: tradepulse-backend
+          property: host
+    buildDir: frontend

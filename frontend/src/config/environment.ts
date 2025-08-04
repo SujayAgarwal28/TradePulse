@@ -27,6 +27,11 @@ const getCurrentProtocol = (): string => {
 
 // BULLETPROOF: Multiple backend host detection strategies
 const getBackendHost = (): string => {
+  // Production: Use environment variable if available
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return import.meta.env.VITE_API_BASE_URL.replace(/^https?:\/\//, '').replace(/:\d+$/, '')
+  }
+  
   if (typeof window === 'undefined') {
     return 'localhost'
   }
@@ -122,7 +127,7 @@ const detectWorkingBackendURL = async (): Promise<string> => {
 export const config = {
   // API Configuration - will be set dynamically
   api: {
-    baseURL: `${getCurrentProtocol()}//${getBackendHost()}:8000`, // Initial value
+    baseURL: import.meta.env.VITE_API_BASE_URL || `${getCurrentProtocol()}//${getBackendHost()}:8000`, // Use env var in production
     timeout: 30000,
     possibleURLs: getPossibleBackendURLs(),
   },
