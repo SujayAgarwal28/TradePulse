@@ -3,8 +3,6 @@ services:
   - type: pserv
     name: tradepulse-postgres
     plan: free
-    databaseName: tradepulse
-    databaseUser: tradepulse
 
   # Backend API Service
   - type: web
