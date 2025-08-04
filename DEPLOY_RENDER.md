@@ -26,14 +26,18 @@ This guide will help you deploy TradePulse on Render.com using their Blueprint f
      - Backend API (Python/FastAPI)
      - Frontend Web App (Node.js/React)
 
-3. **Configure Environment Variables**
-   - Set your own `ALPHA_VANTAGE_API_KEY` (get free key from [Alpha Vantage](https://www.alphavantage.co/support/#api-key))
+3. **Configure Environment Variables (Optional)**
+   - The `render.yaml` includes default environment variables
+   - Optionally set your own `ALPHA_VANTAGE_API_KEY` (get free key from [Alpha Vantage](https://www.alphavantage.co/support/#api-key))
    - `SECRET_KEY` will be auto-generated
    - `DATABASE_URL` will be auto-configured
 
 4. **Deploy**
    - Click "Apply" to start deployment
-   - Wait 5-10 minutes for all services to be ready
+   - Wait 10-15 minutes for all services to be ready
+   - Services will be available at:
+     - Frontend: `https://tradepulse-frontend.onrender.com`
+     - Backend: `https://tradepulse-backend.onrender.com`
 
 ### Option 2: Manual Service Creation
 

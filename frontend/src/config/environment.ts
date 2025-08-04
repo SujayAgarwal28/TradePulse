@@ -32,6 +32,11 @@ const getBackendHost = (): string => {
     return import.meta.env.VITE_API_BASE_URL.replace(/^https?:\/\//, '').replace(/:\d+$/, '')
   }
   
+  // Production: Check if we're on a Render domain
+  if (typeof window !== 'undefined' && window.location.hostname.includes('onrender.com')) {
+    return 'tradepulse-backend.onrender.com'
+  }
+  
   if (typeof window === 'undefined') {
     return 'localhost'
   }
@@ -55,6 +60,16 @@ const getBackendHost = (): string => {
 // BULLETPROOF: Always prioritize localhost for authentication stability
 const getPossibleBackendURLs = (): string[] => {
   const protocol = getCurrentProtocol()
+  
+  // Production: If we have VITE_API_BASE_URL, use it first
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return [import.meta.env.VITE_API_BASE_URL]
+  }
+  
+  // Production: If on Render, use Render backend URL
+  if (typeof window !== 'undefined' && window.location.hostname.includes('onrender.com')) {
+    return ['https://tradepulse-backend.onrender.com']
+  }
   
   // CRITICAL: Always try localhost FIRST - this fixes the auth issues
   const urls: string[] = [
