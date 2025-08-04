@@ -7,9 +7,8 @@ services:
   # Backend API Service
   - type: web
     name: tradepulse-backend
-    env: python
+    runtime: python3
     plan: free
-    region: oregon
     buildCommand: pip install -r requirements.txt
     startCommand: python start.py
     envVars:
@@ -24,14 +23,12 @@ services:
       - key: ALPHA_VANTAGE_API_KEY
         value: IIKESCGRVVVG7T3B
     rootDir: backend
-    healthCheckPath: /health
 
   # Frontend Web Service  
   - type: web
     name: tradepulse-frontend
-    env: node
+    runtime: node
     plan: free
-    region: oregon
     buildCommand: npm ci && npm run build
     startCommand: npm run start
     envVars:
