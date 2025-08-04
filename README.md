@@ -198,26 +198,6 @@ alembic revision --autogenerate -m "Initial migration"
 alembic upgrade head
 ```
 
-## 🚀 Deployment
-
-### Render.com
-1. Connect your GitHub repository
-2. Create a Web Service for the backend
-3. Create a Static Site for the frontend
-4. Add PostgreSQL database
-5. Configure environment variables
-
-### Railway.app
-1. Deploy from GitHub
-2. Add PostgreSQL plugin
-3. Configure environment variables
-4. Deploy both backend and frontend
-
-### Replit
-1. Import from GitHub
-2. Configure the replit.json
-3. Set up environment variables
-4. Run the application
 
 ## 📊 Performance
 
@@ -246,9 +226,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - React and the entire frontend ecosystem
 - TailwindCSS for beautiful styling utilities
 
-## 📞 Support
-
-For support, email support@tradepulse.com or join our Slack channel.
 
 ---
 
