@@ -4,8 +4,7 @@ import {
   Trophy, RefreshCw, ArrowLeft, Search, Activity, PieChart, BarChart3
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+import { config } from '../config/environment';
 
 interface CompetitionPortfolio {
   cash_balance: number;
@@ -92,7 +91,7 @@ const CompetitionTradingNew: React.FC = () => {
 
   const fetchPortfolio = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/competitions/${competitionId}/portfolio`, {
+      const response = await fetch(`${config.api.baseURL}/competitions/${competitionId}/portfolio`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -112,12 +111,12 @@ const CompetitionTradingNew: React.FC = () => {
   const fetchStocks = async () => {
     try {
       // Try popular stocks first, fallback to search for common stocks
-      let response = await fetch(`${API_BASE_URL}/stocks/popular`);
+      let response = await fetch(`${config.api.baseURL}/stocks/popular`);
       if (!response.ok) {
         // Fallback: search for some popular stock symbols
         const symbols = ['AAPL', 'MSFT', 'GOOGL', 'TSLA', 'AMZN'];
         const stockPromises = symbols.map(symbol => 
-          fetch(`${API_BASE_URL}/stocks/search?q=${symbol}`)
+          fetch(`${config.api.baseURL}/stocks/search?q=${symbol}`)
             .then(res => res.ok ? res.json() : [])
             .then(data => data.length > 0 ? data[0] : null)
             .catch(() => null)
@@ -150,7 +149,7 @@ const CompetitionTradingNew: React.FC = () => {
 
   const fetchTrades = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/competitions/${competitionId}/trades`, {
+      const response = await fetch(`${config.api.baseURL}/competitions/${competitionId}/trades`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -170,7 +169,7 @@ const CompetitionTradingNew: React.FC = () => {
 
     setTrading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/competitions/${competitionId}/trade`, {
+      const response = await fetch(`${config.api.baseURL}/competitions/${competitionId}/trade`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -213,7 +212,7 @@ const CompetitionTradingNew: React.FC = () => {
 
     setIsSearching(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/stocks/search?q=${encodeURIComponent(query)}`);
+      const response = await fetch(`${config.api.baseURL}/stocks/search?q=${encodeURIComponent(query)}`);
       if (response.ok) {
         const results = await response.json();
         // Convert string prices to numbers

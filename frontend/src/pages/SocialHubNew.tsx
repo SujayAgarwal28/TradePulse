@@ -3,8 +3,7 @@ import { Link } from 'react-router-dom';
 import { Search, Users, Trophy, Plus, Clock, Star, TrendingUp, DollarSign } from 'lucide-react';
 import UserSearchDropdown from '../components/UserSearchDropdown';
 import { useAuth } from '../contexts/AuthContext';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+import { config } from '../config/environment';
 
 interface Competition {
   id: number;
@@ -37,7 +36,7 @@ const SocialHubNew: React.FC = () => {
 
   const fetchCompetitions = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/social/competitions`);
+      const response = await fetch(`${config.api.baseURL}/social/competitions`);
       if (response.ok) {
         const data = await response.json();
         setCompetitions(data.competitions || []);
@@ -49,7 +48,7 @@ const SocialHubNew: React.FC = () => {
 
   const fetchMyCompetitions = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/social/competitions/my`, {
+      const response = await fetch(`${config.api.baseURL}/social/competitions/my`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },

@@ -32,6 +32,6 @@ services:
     buildCommand: npm ci && npm run build
     startCommand: npm run start
     envVars:
-      - key: VITE_API_BASE_URL
-        value: https://tradepulse-backend.onrender.com
+      - key: VITE_API_URL
+        value: https://tradepulse-cvri.onrender.com
     rootDir: frontend

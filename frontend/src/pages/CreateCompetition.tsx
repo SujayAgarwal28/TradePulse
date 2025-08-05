@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Trophy, Calendar, Users, DollarSign, Clock } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+import { config } from '../config/environment';
 
 const CreateCompetition: React.FC = () => {
   const navigate = useNavigate();
@@ -23,7 +22,7 @@ const CreateCompetition: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/social/competitions`, {
+      const response = await fetch(`${config.api.baseURL}/social/competitions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

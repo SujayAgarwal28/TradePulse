@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Trophy, Users, Clock, DollarSign, TrendingUp, Star, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+import { config } from '../config/environment';
 
 interface CompetitionDetails {
   id: number;
@@ -67,14 +66,14 @@ const CompetitionDetailsPage: React.FC = () => {
   const fetchCompetitionData = async () => {
     try {
       // Fetch competition details
-      const detailsResponse = await fetch(`${API_BASE_URL}/social/competitions/${id}`);
+      const detailsResponse = await fetch(`${config.api.baseURL}/social/competitions/${id}`);
       if (detailsResponse.ok) {
         const details = await detailsResponse.json();
         setCompetition(details);
       }
 
       // Fetch leaderboard
-      const leaderboardResponse = await fetch(`${API_BASE_URL}/social/competitions/${id}/leaderboard`);
+      const leaderboardResponse = await fetch(`${config.api.baseURL}/social/competitions/${id}/leaderboard`);
       if (leaderboardResponse.ok) {
         const leaderboardData = await leaderboardResponse.json();
         setLeaderboard(leaderboardData);
@@ -83,7 +82,7 @@ const CompetitionDetailsPage: React.FC = () => {
         if (token) {
           // Get current user ID by calling a user endpoint or decoding token
           try {
-            const userResponse = await fetch(`${API_BASE_URL}/auth/me`, {
+            const userResponse = await fetch(`${config.api.baseURL}/auth/me`, {
               headers: { 'Authorization': `Bearer ${token}` }
             });
             if (userResponse.ok) {
@@ -114,7 +113,7 @@ const CompetitionDetailsPage: React.FC = () => {
     
     setJoining(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/social/competitions/${id}/join`, {
+      const response = await fetch(`${config.api.baseURL}/social/competitions/${id}/join`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
