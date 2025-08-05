@@ -59,17 +59,17 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# Add CORS middleware with production-ready settings
-allowed_origins = ["*"]  # Default to allow all
-if hasattr(settings, 'ALLOWED_ORIGINS'):
-    allowed_origins = settings.ALLOWED_ORIGINS
 
+# Set CORS to only allow the deployed frontend domain
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
+    allow_origins=[
+        "https://tradepulse-1.onrender.com",  # Your frontend Render domain
+        # Add more domains if needed
+    ],
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],  # Explicitly include OPTIONS
-    allow_headers=["*"],  # Allow all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Include routers
@@ -81,18 +81,7 @@ app.include_router(portfolio_router)
 app.include_router(social_router)
 app.include_router(competition_trading_router)
 
-# Manual CORS preflight handler for debugging
-@app.options("/{path:path}")
-async def options_handler(path: str):
-    return Response(
-        status_code=200,
-        headers={
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-            "Access-Control-Allow-Headers": "*",
-            "Access-Control-Allow-Credentials": "true",
-        }
-    )
+
 
 
 @app.get("/")
