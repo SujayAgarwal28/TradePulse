@@ -2,6 +2,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { BarChart3, Home, TrendingUp, Wallet, User, Settings, LogOut, Users } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import MobileNav from './MobileNav'
 
 const Navbar = () => {
   const location = useLocation()
@@ -29,7 +30,12 @@ const Navbar = () => {
 
   return (
     <nav className="bg-finance-card shadow-lg w-full overflow-x-hidden sticky top-0 z-[1000]">
-      <div className="w-full max-w-full px-4 sm:px-6">
+      {/* Mobile Navigation */}
+      <div className="md:hidden">
+        <MobileNav />
+      </div>
+      {/* Desktop Navigation */}
+      <div className="hidden md:block w-full max-w-full px-4 sm:px-6">
         <div className="flex justify-between items-center h-16 min-w-0">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 flex-shrink-0">
@@ -38,7 +44,7 @@ const Navbar = () => {
           </Link>
 
           {/* Navigation Links */}
-          <div className="hidden md:flex space-x-4 lg:space-x-8 flex-shrink-0">
+          <div className="flex space-x-4 lg:space-x-8 flex-shrink-0">
             <Link
               to="/dashboard"
               className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
