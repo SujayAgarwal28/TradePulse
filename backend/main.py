@@ -64,8 +64,9 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://tradepulse-1.onrender.com",  # Your frontend Render domain
-        # Add more domains if needed
+        "https://tradepulse-1.onrender.com",  # Deployed frontend
+        "http://localhost:5173",             # Local frontend
+        "http://127.0.0.1:5173",             # Localhost (alternative)
     ],
     allow_credentials=True,
     allow_methods=["*"],
