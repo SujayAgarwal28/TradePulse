@@ -139,35 +139,37 @@ const detectWorkingBackendURL = async (): Promise<string> => {
 }
 
 // Configuration object with dynamic backend detection
+
+// Helper to ensure no trailing slash in API base URL
+function sanitizeBaseURL(url: string): string {
+  return url.replace(/\/+$/, '');
+}
+
 export const config = {
-  // API Configuration - will be set dynamically
   api: {
-    baseURL: import.meta.env.VITE_API_BASE_URL || `${getCurrentProtocol()}//${getBackendHost()}:8000`, // Use env var in production
+    baseURL: sanitizeBaseURL(import.meta.env.VITE_API_BASE_URL || `${getCurrentProtocol()}//${getBackendHost()}:8000`),
     timeout: 30000,
     possibleURLs: getPossibleBackendURLs(),
   },
-  
-  // Frontend Configuration
   frontend: {
     baseURL: `${getCurrentProtocol()}//${getCurrentHost()}:5173`,
   },
-  
-  // Development flags
   isDevelopment: import.meta.env.DEV,
   isProduction: import.meta.env.PROD,
-}
+};
 
 // Export individual values for convenience
-export let API_BASE_URL = config.api.baseURL
-export const FRONTEND_BASE_URL = config.frontend.baseURL
+export let API_BASE_URL = config.api.baseURL;
+export const FRONTEND_BASE_URL = config.frontend.baseURL;
 
 // BULLETPROOF: Initialize backend URL detection
 export const initializeBackendURL = async (): Promise<string> => {
   try {
     const workingURL = await detectWorkingBackendURL()
-    config.api.baseURL = workingURL
-    API_BASE_URL = workingURL
-    return workingURL
+    const sanitized = sanitizeBaseURL(workingURL)
+    config.api.baseURL = sanitized
+    API_BASE_URL = sanitized
+    return sanitized
   } catch (error) {
     console.error('🚨 Failed to detect backend URL:', error)
     return config.api.baseURL // Return fallback
